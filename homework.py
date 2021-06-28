@@ -37,7 +37,7 @@ class CaloriesCalculator(Calculator):
         return f'{amount} калорий уже съедено сегодня.'
 
     def get_calories_remained(self):
-        calories_value = self.limit-super().get_today_stats()
+        calories_value = self.limit - super().get_today_stats()
         if calories_value > 0:
             return (f'Сегодня можно съесть что-нибудь ещё, но с общей'
                     f' калорийностью не более {calories_value} кКал')
@@ -45,8 +45,8 @@ class CaloriesCalculator(Calculator):
             return 'Хватит есть!'
 
     def get_week_stats(self):
-            week_calories = super().get_week_stats()
-            return f'{week_calories} калорий получено за последние 7 дней'
+        week_calories = super().get_week_stats()
+        return f'{week_calories} калорий получено за последние 7 дней'
 
 
 class CashCalculator(Calculator):
