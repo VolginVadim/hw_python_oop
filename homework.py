@@ -11,42 +11,33 @@ class Calculator:
         self.records.append(record)
 
     def get_today_stats(self):
-        today_amount = 0
-        for record in self.records:
-            if record.date == dt.date.today():
-                today_amount += record.amount
+        today = dt.date.today()
+        values = [rec.amount for rec in self.records
+                  if rec.date == today]
+        today_amount = sum(values)
         return today_amount
 
     def get_week_stats(self):
         today = dt.date.today()
         week_ago = today - dt.timedelta(days=7)
-        week_amount = 0
-        for record in self.records:
-            if today >= record.date >= week_ago:
-                week_amount += record.amount
+        """Берем интервал 7 дней, включая сегодня"""
+        values = [rec.amount for rec in self.records if
+                  today >= rec.date > week_ago]
+        week_amount = sum(values)
         return week_amount
 
 
 class CaloriesCalculator(Calculator):
-    def __init__(self, limit):
-        self.limit = limit
-        super().__init__(self.limit)
-
-    def get_today_stats(self):
-        amount = super().get_today_stats()
-        return f'{amount} калорий уже съедено сегодня.'
-
     def get_calories_remained(self):
-        calories_value = self.limit - super().get_today_stats()
-        if calories_value > 0:
+        today_amount = super().get_today_stats()
+        print(f'{today_amount} калорий уже съедено сегодня.')
+        week_amount = super().get_week_stats()
+        print(f'{week_amount} калорий получено за последние 7 дней')
+        today_remain = self.limit - today_amount
+        if today_remain > 0:
             return (f'Сегодня можно съесть что-нибудь ещё, но с общей'
-                    f' калорийностью не более {calories_value} кКал')
-        else:
-            return 'Хватит есть!'
-
-    def get_week_stats(self):
-        week_calories = super().get_week_stats()
-        return f'{week_calories} калорий получено за последние 7 дней'
+                    f' калорийностью не более {today_remain} кКал')
+        return 'Хватит есть!'
 
 
 class CashCalculator(Calculator):
@@ -54,15 +45,11 @@ class CashCalculator(Calculator):
     EURO_RATE = 70.0
     RUB_RATE = 1.0
 
-    def __init__(self, limit):
-        self.limit = limit
-        super().__init__(self.limit)
-
-    def get_today_stats(self):
-        amount = super().get_today_stats()
-        return f'{amount} денег потрачено сегодня сегодня.'
-
     def get_today_cash_remained(self, currency):
+        today_amount = super().get_today_stats()
+        print(f'{today_amount} денег потрачено сегодня сегодня.')
+        week_amount = super().get_week_stats()
+        print(f'{week_amount} денег потрачено за последние 7 дней')
         currencies = {
             'usd': [self.USD_RATE, "USD"],
             'eur': [self.EURO_RATE, "Euro"],
@@ -70,22 +57,17 @@ class CashCalculator(Calculator):
         }
         if currency not in currencies:
             return f'Валюты {currency} нету в нашей базе данных!'
-        money_left = self.limit - super().get_today_stats()
-        money_value = money_left / currencies[currency][0]
-        rounded_value = round(money_value, 2)
-        if money_value > 0:
+        today_remain = self.limit - super().get_today_stats()
+        rem_cash_value = today_remain / currencies[currency][0]
+        rounded_value = round(rem_cash_value, 2)
+        abs_cash_value = abs(rounded_value)
+        if rem_cash_value > 0:
             return (f'На сегодня осталось {rounded_value}'
                     f' {currencies[currency][1]}')
-        elif money_value == 0:
+        elif rem_cash_value == 0:
             return 'Денег нет, держись'
-        else:
-            abs_money_value = abs(rounded_value)
-            return (f'Денег нет, держись: твой долг - {abs_money_value}'
-                    f' {currencies[currency][1]}')
-
-    def get_week_stats(self):
-        week_money = super().get_week_stats()
-        return f'{week_money} денег потрачено за последние 7 дней'
+        return (f'Денег нет, держись: твой долг - {abs_cash_value}'
+                f' {currencies[currency][1]}')
 
 
 class Record:
