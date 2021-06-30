@@ -30,7 +30,6 @@ class Calculator:
 class CaloriesCalculator(Calculator):
     def get_calories_remained(self):
         today_amount = self.get_today_stats()
-        week_amount = self.get_week_stats()
         today_remain = self.limit - today_amount
         if today_remain > 0:
             return (f'Сегодня можно съесть что-нибудь ещё, но с общей'
@@ -45,7 +44,6 @@ class CashCalculator(Calculator):
 
     def get_today_cash_remained(self, currency):
         today_amount = self.get_today_stats()
-        week_amount = self.get_week_stats()
         currencies = {
             'usd': [self.USD_RATE, "USD"],
             'eur': [self.EURO_RATE, "Euro"],
