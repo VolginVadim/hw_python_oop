@@ -29,10 +29,8 @@ class Calculator:
 
 class CaloriesCalculator(Calculator):
     def get_calories_remained(self):
-        today_amount = super().get_today_stats()
-        print(f'{today_amount} калорий уже съедено сегодня.')
-        week_amount = super().get_week_stats()
-        print(f'{week_amount} калорий получено за последние 7 дней')
+        today_amount = self.get_today_stats()
+        week_amount = self.get_week_stats()
         today_remain = self.limit - today_amount
         if today_remain > 0:
             return (f'Сегодня можно съесть что-нибудь ещё, но с общей'
@@ -46,10 +44,8 @@ class CashCalculator(Calculator):
     RUB_RATE = 1.0
 
     def get_today_cash_remained(self, currency):
-        today_amount = super().get_today_stats()
-        print(f'{today_amount} денег потрачено сегодня сегодня.')
-        week_amount = super().get_week_stats()
-        print(f'{week_amount} денег потрачено за последние 7 дней')
+        today_amount = self.get_today_stats()
+        week_amount = self.get_week_stats()
         currencies = {
             'usd': [self.USD_RATE, "USD"],
             'eur': [self.EURO_RATE, "Euro"],
@@ -57,7 +53,7 @@ class CashCalculator(Calculator):
         }
         if currency not in currencies:
             return f'Валюты {currency} нету в нашей базе данных!'
-        today_remain = self.limit - super().get_today_stats()
+        today_remain = self.limit - today_amount
         rem_cash_value = today_remain / currencies[currency][0]
         rounded_value = round(rem_cash_value, 2)
         abs_cash_value = abs(rounded_value)
